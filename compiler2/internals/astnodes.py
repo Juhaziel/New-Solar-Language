@@ -8,6 +8,7 @@ https://docs.python.org/3/library/ast.html
 class AST:
     _fields: tuple[str, ...] = ()
     _attribs: tuple[str, ...] = ()
+    symref: any | None = None # A reference to a symbol in a symbol table
     lineno: int | None = None
     col_offset: int | None = None
     end_lineno: int | None = None
@@ -361,8 +362,9 @@ class ContinueStmt(Stmt):
 		self.label: str | None = label
 
 class BreakStmt(Stmt):
-	def __init__(self, label: str | None):
-		self._fields = ("label")
+	def __init__(self, breakif: bool, label: str | None):
+		self._fields = ("breakif", "label")
+		self.breakif: bool = breakif
 		self.label: str | None = label
 
 class ReturnStmt(Stmt):

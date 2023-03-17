@@ -33,7 +33,7 @@ module IDK {
          | ExprStmt(Expr expr)
 
          | ContinueStmt(ident? label)
-         | BreakStmt(ident? label)
+         | BreakStmt(boolean breakif, ident? label)
          | ReturnStmt(Expr? ret_expr)
          
          | IfStmt(Expr cond_expr, Stmt body, Stmt? else_body, ident? label)

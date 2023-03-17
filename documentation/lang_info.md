@@ -27,7 +27,7 @@ Arrays are represented by a prefixed `[n]` where `n` is the amount of times to a
 Structures and bitfields are complex types that contain multiple members accessible via the dot operator. The bits
 ```
 struct NAME {
-    NAME TYPE (: BITS) ,
+    NAME : TYPE (: BITS) ,
     ...
 }
 ```
@@ -41,7 +41,7 @@ Unions are similar to structures in their shape. However, a union type has the s
 
 ```
 union NAME {
-    NAME TYPE (: BITS) ,
+    NAME : TYPE (: BITS) ,
 }
 ```
 
@@ -116,14 +116,17 @@ Each block has its variable scope.
 ```
 continue (label) ;
 break (label) ;
+breakif (label) ;
 return (EXPR) ;
 ```
 
-Goto statements jump to the specified label. Labels must be in ancestor or sibling scopes of the goto's scope.
+##### Continue #####
+Continue statements skip to the next iteration of a loop that contains it.
+If a label is specified, it will restart in the loop specified by the label.
 
-Continue statements return to the beginning of a loop.
-
-Break statements skip to the end of a loop.
+##### Break and Breakif #####
+Break statements immediately exit the loop (break) or the if-else (breakif) statement that contains it.
+If a label is specified, it will exit the if-else or loop specified by the label.
 
 ##### Return #####
 Return statements return an expression which much be the same type as the function it is contained in.
@@ -148,7 +151,7 @@ If the end of the function is reached before any return statement, one is implic
 
 ##### Labeled Control Flow #####
 Control flow statements (if-else, while, for) may be preceded by a name which will be registered as its label.
-These labels may be used with break (all statements) or continue (loop statements) 
+These labels may be used with break (loop statements), breakif (if statements), or continue (loop statements) 
 
 #### Expression Statement and Expressions ####
 `EXPR ;`
