@@ -1,0 +1,78 @@
+-- v0.2: Labels are now control-flow only
+
+module IDK {
+    Module = (Decl* decls)
+
+    Type = VoidType
+    
+         | RefType(ident ref_type_name) -- Represents a reference to a type by name
+         | StructRefType(ident ref_type_name) -- Represents a reference to a type by struct name
+         | UnionRefType(ident ref_type_name)
+
+         | IntType(string type)
+         | ArrayType(Type inner_type, Expr? size) -- ArrayType's size Expr can also be a constant 1 to represent pointers
+         | FuncType(Type return_type, Type* param_types, boolean is_variadic)
+
+         | StructType(MemberData* members)
+         | UnionType(MemberData* members)
+         attributes (boolean is_volatile)
+    
+    MemberData = (ident name, Type type, Expr bits)
+
+    Decl = VarDecl(Expr? value, boolean is_init)
+         | ConstDecl(Expr? value, boolean is_init)
+         | FuncDecl(ident* param_names, Stmt? body, boolean is_init, boolean is_inline)
+         | StructDecl(ident* member_names)
+         | UnionDecl(ident* member_names)
+         | TypeDecl
+         attributes (ident name, Type type)
+    
+    Stmt = EmptyStmt
+         | DefStmt(Decl decl)
+         | CompoundStmt(Stmt* stmts)
+         | ExprStmt(Expr expr)
+
+         | ContinueStmt(ident? label)
+         | BreakStmt(ident? label)
+         | ReturnStmt(Expr? ret_expr)
+         
+         | IfStmt(Expr cond_expr, Stmt body, Stmt? else_body, ident? label)
+         | IterStmt(Expr? init_expr, Expr? cond_expr, Expr? inc_expr, Stmt body, Stmt? else_body, ident? label)
+
+    Expr = CompoundExpr(Type record_or_array_type, Expr* exprs)
+
+         | NameExpr(ident name) -- Represents a reference to some sort identifier in the symbol table
+         | IntExpr(IntType type, int value)
+         | StrExpr(char* utf8)
+         | SzexprExpr(Expr expr)
+         | SztypeExpr(Type type)
+
+         | CallExpr(Expr func_expr, Expr* args)
+         | IndexExpr(Expr array_expr, Expr index_expr)
+         | AccessExpr(Expr record_expr, ident member_name)
+         | CastExpr(Expr expr, Type cast_type, boolean signed)
+
+         | DerefExpr(Expr pointer_expr)
+         | AddrOfExpr(Expr expr)
+         | UnaryExpr(UnaryOp op, Expr expr)
+         | UnaryCondExpr(UnaryCOp op, Expr expr)
+
+         | BinaryExpr(Expr left, BinOp op, Expr right)
+         | BinaryCondExpr(Expr left, BinCOp op, Expr right)
+
+         | TernaryExpr(Expr cond_expr, Expr true_expr, Expr false_expr)
+
+         | AssignExpr(Expr lhs, Expr rhs, BinOp? op)
+
+         | CommaExpr(Expr* exprs)
+    
+    UnaryOp  = UnaryPlus | UnaryMinus | BitNot | AddrOf
+    UnaryCOp = LogicalNot
+    BinOp    = Add | Sub | Mult | UDiv | SDiv | UMod | SMod
+             | ShLogLeft | ShLogRight | ShArRight
+             | BitAnd | BitXor | BitOr
+    BinCOp   = LogicalAnd | LogicalOr
+             | Eq | NotEq
+             | ULt | ULtE | SLt | SLtE
+             | UGt | UGtE | SGt | SGtE
+}
