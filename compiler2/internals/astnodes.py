@@ -239,18 +239,6 @@ class RefType(Type):
 		self._fields = ("ref_type_name")
 		self.ref_type_name: str = ref_type_name
 
-class StructRefType(Type):
-	def __init__(self, is_volatile: bool, ref_type_name: str):
-		super().__init__(is_volatile)
-		self._fields = ("ref_type_name")
-		self.ref_type_name: str = ref_type_name
-
-class UnionRefType(Type):
-	def __init__(self, is_volatile: bool, ref_type_name: str):
-		super().__init__(is_volatile)
-		self._fields = ("ref_type_name")
-		self.ref_type_name: str = ref_type_name
-
 class IntType(Type):
 	def __init__(self, is_volatile: bool, type: str):
 		super().__init__(is_volatile)
@@ -321,18 +309,6 @@ class FuncDecl(Decl):
 		self.body: 'Stmt' | None = body
 		self.is_init: bool = is_init
 		self.is_inline: bool = is_inline
-
-class StructDecl(Decl):
-	def __init__(self, name: str, type: 'Type', member_names: list[str]):
-		super().__init__(name, type)
-		self._fields = ("member_names")
-		self.member_names: list[str] = member_names
-
-class UnionDecl(Decl):
-	def __init__(self, name: str, type: 'Type', member_names: list[str]):
-		super().__init__(name, type)
-		self._fields = ("member_names")
-		self.member_names: list[str] = member_names
 
 class TypeDecl(Decl): pass
 

@@ -1,4 +1,4 @@
--- v0.2: Labels are now control-flow only
+-- v0.3: Structs can only be named using a RefType and TypeDecl. Otherwise they are nameless
 
 module IDK {
     Module = (Decl* decls)
@@ -6,9 +6,6 @@ module IDK {
     Type = VoidType
     
          | RefType(ident ref_type_name) -- Represents a reference to a type by name
-         | StructRefType(ident ref_type_name) -- Represents a reference to a type by struct name
-         | UnionRefType(ident ref_type_name)
-
          | IntType(string type)
          | ArrayType(Type inner_type, Expr? size) -- ArrayType's size Expr can also be a constant 1 to represent pointers
          | FuncType(Type return_type, Type* param_types, boolean is_variadic)
@@ -22,8 +19,6 @@ module IDK {
     Decl = VarDecl(Expr? value, boolean is_init)
          | ConstDecl(Expr? value, boolean is_init)
          | FuncDecl(ident* param_names, Stmt? body, boolean is_init, boolean is_inline)
-         | StructDecl(ident* member_names)
-         | UnionDecl(ident* member_names)
          | TypeDecl
          attributes (ident name, Type type)
     
