@@ -6,7 +6,7 @@ The basic types are `int`, `long`, and `quad`.
 Pointers are represented by a prefixed `*`.
 
 ### VOLATILE ###
-The volatile keyword preceeds the type it modifies and indicates that the variable in question should not be cached, but instead written to and read from memory every time it is accessed.
+The `volatile` keyword preceeds the type it modifies and indicates that the variable in question should not be cached, but instead written to and read from memory every time it is accessed.
 
 ### VOID ###
 The `void` type represents a type with no value.
@@ -122,6 +122,7 @@ return (EXPR) ;
 
 ##### Continue #####
 Continue statements skip to the next iteration of a loop that contains it.
+
 If a label is specified, it will restart in the loop specified by the label.
 
 ##### Break and Breakif #####
@@ -201,7 +202,7 @@ Left-to-right
 
 Right-to-left
 (13) ?:           | Ternary conditional
-(14) =            | Assignment
+(14) :=           | Assignment
      += -=        | Assignment by sum or different
      *=           | Assignment by multiplication
      /= /$=       | Assignment by unsigned or signed division
