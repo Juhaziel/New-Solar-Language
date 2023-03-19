@@ -479,6 +479,12 @@ class CommaExpr(Expr):
 		self._fields = ("exprs")
 		self.exprs: list['Expr'] = exprs
 
+class ComplexExpr(Expr):
+	def __init__(self, type: str, value: 'any'):
+		self._fields = ("type", "value")
+		self.type: str = type
+		self.value: 'any' = value
+
 ## TYPE 'UnaryOp'
 class UnaryOp(AST): pass
 

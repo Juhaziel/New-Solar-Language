@@ -1,4 +1,4 @@
--- v0.6: removed AddrOf (&) from unary operators
+-- v0.7: added ComplexExpr (for complex init values)
 
 module IDK {
     Module = (Decl* decls)
@@ -60,6 +60,8 @@ module IDK {
          | AssignExpr(Expr lhs, Expr rhs, BinOp? op)
 
          | CommaExpr(Expr* exprs)
+
+         | ComplexExpr(string type, any value) -- Types are 'str', 'array', 'struct', and 'expr' 
     
     UnaryOp  = UnaryPlus | UnaryMinus | BitNot
     UnaryCOp = LogicalNot
