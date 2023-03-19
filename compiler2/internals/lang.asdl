@@ -7,7 +7,7 @@ module IDK {
     
          | RefType(ident ref_type_name) -- Represents a reference to a type by name
          | IntType(string type)
-         | ArrayType(Type inner_type, Expr? size) -- ArrayType's size Expr can also be a constant 1 to represent pointers
+         | ArrayType(Type inner_type, Expr? size) -- ArrayType's size Expr can also be None to represent pointers
          | FuncType(Type return_type, Type* param_types, boolean is_variadic)
 
          | StructType(MemberData* members)

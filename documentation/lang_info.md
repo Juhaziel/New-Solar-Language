@@ -26,7 +26,7 @@ Arrays are represented by a prefixed `[n]` where `n` is the amount of times to a
 ### STRUCTURES AND BITFIELDS ###
 Structures and bitfields are complex types that contain multiple members accessible via the dot operator. The bits
 ```
-struct NAME {
+struct {
     NAME : TYPE (: BITS) ,
     ...
 }
@@ -40,7 +40,7 @@ However, for an amount of bits smaller than its maximum, values will be allocate
 Unions are similar to structures in their shape. However, a union type has the same size as its widest member. All members overlap.
 
 ```
-union NAME {
+union {
     NAME : TYPE (: BITS) ,
 }
 ```
@@ -67,8 +67,8 @@ By default, every identifier defined in the global scope is considered visible o
 A global identifier can only have one definition which overwrites any previous declaration.
 
 ```
-(static) let   NAME : TYPE = INIT_EXPR ;
-(static) set   NAME : TYPE = EXPR ;
+(static) let   NAME : TYPE := INIT_EXPR ;
+(static) set   NAME : TYPE := EXPR ;
 (static) func  NAME ( PARAMS ) -> ( TYPE ) { STMT ... }
 inline   func  NAME ( PARAMS ) -> ( TYPE ) { STMT ... }
 ```
@@ -98,7 +98,7 @@ Local scope represents the scope inside of functions and is individual to each o
 
 #### Definition Statement ####
 ```
-(static) let NAME : TYPE (= INIT_EXPR) ;
+(static) let NAME : TYPE (:= INIT_EXPR) ;
 ```
 
 If an initial value is not provided, the variables will either be left uninitialized (not static) or initialized to 0 (static)
