@@ -1,4 +1,4 @@
--- v0.5: added description attribute to declarations
+-- v0.6: removed AddrOf (&) from unary operators
 
 module IDK {
     Module = (Decl* decls)
@@ -61,7 +61,7 @@ module IDK {
 
          | CommaExpr(Expr* exprs)
     
-    UnaryOp  = UnaryPlus | UnaryMinus | BitNot | AddrOf
+    UnaryOp  = UnaryPlus | UnaryMinus | BitNot
     UnaryCOp = LogicalNot
     BinOp    = Add | Sub | Mult | UDiv | SDiv | UMod | SMod
              | ShLogLeft | ShLogRight | ShArRight

@@ -488,8 +488,6 @@ class UnaryMinus(UnaryOp): pass
 
 class BitNot(UnaryOp): pass
 
-class AddrOf(UnaryOp): pass
-
 ## TYPE 'UnaryCOp'
 class UnaryCOp(AST): pass
 
