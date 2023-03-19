@@ -85,6 +85,9 @@ class Token:
     
     def iscomment(self) -> bool:
         return self.istype(TokenType.COMMENT)
+    
+    def iseof(self) -> bool:
+        return self.istype(TokenType.EOF)
 
 class Lexer:
     L_UNKNOWN = 1
