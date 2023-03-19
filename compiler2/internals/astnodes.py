@@ -288,26 +288,23 @@ class Decl(AST):
 		self.type: 'Type' = type
 
 class VarDecl(Decl):
-	def __init__(self, name: str, type: 'Type', value: 'Expr' | None, is_init: bool):
+	def __init__(self, name: str, type: 'Type', value: 'Expr' | None):
 		super().__init__(name, type)
-		self._fields = ("value", "is_init")
+		self._fields = ("value")
 		self.value: 'Expr' | None = value
-		self.is_init: bool = is_init
 
 class ConstDecl(Decl):
-	def __init__(self, name: str, type: 'Type', value: 'Expr' | None, is_init: bool):
+	def __init__(self, name: str, type: 'Type', value: 'Expr' | None):
 		super().__init__(name, type)
-		self._fields = ("value", "is_init")
+		self._fields = ("value")
 		self.value: 'Expr' | None = value
-		self.is_init: bool = is_init
 
 class FuncDecl(Decl):
-	def __init__(self, name: str, type: 'Type', param_names: list[str], body: 'Stmt' | None, is_init: bool, is_inline: bool):
+	def __init__(self, name: str, type: 'Type', param_names: list[str], body: 'Stmt' | None, is_inline: bool):
 		super().__init__(name, type)
-		self._fields = ("param_names", "body", "is_init", "is_inline")
+		self._fields = ("param_names", "body", "is_inline")
 		self.param_names: list[str] = param_names
 		self.body: 'Stmt' | None = body
-		self.is_init: bool = is_init
 		self.is_inline: bool = is_inline
 
 class TypeDecl(Decl): pass
