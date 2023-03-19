@@ -282,26 +282,27 @@ class MemberData(AST):
 
 ## TYPE 'Decl'
 class Decl(AST):
-	def __init__(self, name: str, type: 'Type'):
-		self._attribs = ("name", "type")
+	def __init__(self, name: str, type: 'Type', description: str | None):
+		self._attribs = ("name", "type", "description")
 		self.name: str = name
 		self.type: 'Type' = type
+		self.description: str | None = description
 
 class VarDecl(Decl):
-	def __init__(self, name: str, type: 'Type', value: 'Expr' | None):
-		super().__init__(name, type)
+	def __init__(self, name: str, type: 'Type', description: str | None, value: 'Expr' | None):
+		super().__init__(name, type, description)
 		self._fields = ("value")
 		self.value: 'Expr' | None = value
 
 class ConstDecl(Decl):
-	def __init__(self, name: str, type: 'Type', value: 'Expr' | None):
-		super().__init__(name, type)
+	def __init__(self, name: str, type: 'Type', description: str | None, value: 'Expr' | None):
+		super().__init__(name, type, description)
 		self._fields = ("value")
 		self.value: 'Expr' | None = value
 
 class FuncDecl(Decl):
-	def __init__(self, name: str, type: 'Type', param_names: list[str], body: 'Stmt' | None, is_inline: bool):
-		super().__init__(name, type)
+	def __init__(self, name: str, type: 'Type', description: str | None, param_names: list[str], body: 'Stmt' | None, is_inline: bool):
+		super().__init__(name, type, description)
 		self._fields = ("param_names", "body", "is_inline")
 		self.param_names: list[str] = param_names
 		self.body: 'Stmt' | None = body

@@ -1,4 +1,4 @@
--- v0.4: removed is_init from decl since we can just test for None
+-- v0.5: added description attribute to declarations
 
 module IDK {
     Module = (Decl* decls)
@@ -20,7 +20,7 @@ module IDK {
          | ConstDecl(Expr? value)
          | FuncDecl(ident* param_names, Stmt? body, boolean is_inline)
          | TypeDecl
-         attributes (ident name, Type type)
+         attributes (ident name, Type type, string? description)
     
     Stmt = EmptyStmt
          | DefStmt(Decl decl)
