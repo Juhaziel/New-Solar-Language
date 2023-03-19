@@ -24,7 +24,7 @@ Arrays are represented by a prefixed `[n]` where `n` is the amount of times to a
 `n` must be left unspecified if the variable is initialized to a string or other list of expressions.
 
 ### STRUCTURES AND BITFIELDS ###
-Structures and bitfields are complex types that contain multiple members accessible via the dot operator. The bits
+Structures and bitfields are complex types that contain multiple members accessible via the dot operator.
 ```
 struct {
     NAME : TYPE (: BITS) ,
@@ -32,7 +32,7 @@ struct {
 }
 ```
 
-Structure members are allocated in sequential order. `BITS` is by default the amount of bits `TYPE` will take in memory.
+Structure members are allocated in sequential order. `BITS` is by default the amount of bits `TYPE` will take in memory and must be an integer (expressions are not allowed).
 
 However, for an amount of bits smaller than its maximum, values will be allocated from lowest bit to highest bit. Sequential members of the same `TYPE` will be allocated in the same words until their sum surpasses the size of `TYPE`.
 
@@ -138,16 +138,16 @@ If the end of the function is reached before any return statement, one is implic
 
 #### If Statement ####
 ```
-($ NAME :) if ( EXPR ) STMT
-($ NAME :) if ( EXPR ) STMT else STMT
+(NAME :) if ( EXPR ) STMT
+(NAME :) if ( EXPR ) STMT else STMT
 ```
 
 #### Iteration Statement ####
 ```
-($ NAME :) while ( EXPR ) STMT
-($ NAME :) while ( EXPR ) STMT else STMT
-($ NAME :) for ( (EXPR) ; (EXPR) ; (EXPR) ) STMT
-($ NAME :) for ( (EXPR) ; (EXPR) ; (EXPR) ) STMT else STMT
+(NAME :) while ( EXPR ) STMT
+(NAME :) while ( EXPR ) STMT else STMT
+(NAME :) for ( (EXPR) ; (EXPR) ; (EXPR) ) STMT
+(NAME :) for ( (EXPR) ; (EXPR) ; (EXPR) ) STMT else STMT
 ```
 
 ##### Labeled Control Flow #####
