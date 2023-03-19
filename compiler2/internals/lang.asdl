@@ -61,7 +61,7 @@ module IDK {
 
          | CommaExpr(Expr* exprs)
 
-         | ComplexExpr(string type, any value) -- Types are 'str', 'array', 'struct', and 'expr' 
+         | ComplexExpr(string type, any value) -- Types are 'str', 'array', 'struct'
     
     UnaryOp  = UnaryPlus | UnaryMinus | BitNot
     UnaryCOp = LogicalNot
