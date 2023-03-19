@@ -17,7 +17,7 @@ argparser = argparse.ArgumentParser(
 group = argparser.add_mutually_exclusive_group()
 group.add_argument("--debug", action="store_true", help="show debug output", default=False)
 group.add_argument("-v", "--verbose", action="store_true", help="show verbose output", default=False)
-group.add_argument("-woff", "--no-warnings", action="store_true", help="show verbose output", default=False)
+group.add_argument("-woff", "--no-warnings", action="store_true", help="show only errors", default=False)
 argparser.add_argument("-f", action="extend", nargs="+", dest="options", help="specify options for the compiler", default=[])
 argparser.add_argument("-d", "--dir", help="specify the output directory for the output files", default=os.getcwd())
 argparser.add_argument("infile", action="extend", nargs=argparse.REMAINDER, help="specify the New Solar files to compile", default=[])
