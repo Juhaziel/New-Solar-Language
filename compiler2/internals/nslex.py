@@ -87,15 +87,15 @@ class Token:
         return self.istype(TokenType.COMMENT)
 
 class Lexer:
-    L_UNKNOWN = 0
-    L_EOF = 1
-    L_MISSINGQUOTE = 2
-    L_ALPHAAFTERNUM = 3
-    L_INVALIDINTPREFIX = 4
-    L_INVALIDINTSUFFIX = 5
-    L_INVALIDUNICODECHAR = 6
-    L_CANNOTTRUNCATE = 7
-    L_INVALIDSTRINGCHAR = 8
+    L_UNKNOWN = 1
+    L_INVALIDINTPREFIX = 10
+    L_INVALIDINTSUFFIX = 11
+    L_CANNOTTRUNCATE = 12
+    L_ALPHAAFTERNUM = 13
+    L_MISSINGQUOTE = 20
+    L_INVALIDUNICODECHAR = 21
+    L_INVALIDSTRINGCHAR = 22
+    L_EOF = 99
     
     def __init__(self, source):
         self.source = source
