@@ -37,7 +37,9 @@ def main(args):
         try:
             lexer = nslex.Lexer(insource)
             tokens = lexer.lex_all()
-            if not lexer.success: success = False
+            if not lexer.success:
+                success = False
+                continue
             else: complogger.info("lexer phase succeeded.")
         except Exception as e:
             complogger.fatal(f"Lexer threw uncaught exception with message: {e}")
@@ -76,6 +78,8 @@ def main(args):
         except Exception as e:
             complogger.fatal(f"Assembly generator threw uncaught exception with message: {e}")
             continue
+        
+        complogger.info(f"successfully compiled \"{infile}\"")
     if success:
         print(f"[SUCCESS] compilation of {len(args.infile)} file(s) succeeded.")
     else:
