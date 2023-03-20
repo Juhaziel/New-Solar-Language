@@ -14,6 +14,7 @@ class LoggerFactory:
     class Logger:
         def __init__(self):
             self._level = LogLevel.WARN
+            self._padlevel = 0 # For debug only
             
         def setLevel(self, loglevel: LogLevel):
             if not isinstance(loglevel, LogLevel):
@@ -22,7 +23,20 @@ class LoggerFactory:
         
         def log(self, message: str, loglevel: LogLevel=LogLevel.WARN):
             if loglevel.value < self._level.value: return
-            print(f"[{loglevel.name}] {message}")
+            pad = ""
+            if loglevel == LogLevel.DEBUG:
+                pad = "  " * self._padlevel
+            print(f"{pad}[{loglevel.name}] {message}")
+            
+        def increasepad(self):
+            self._padlevel += 1
+        
+        def decreasepad(self):
+            if self._padlevel == 0: return
+            self._padlevel -= 1
+        
+        def resetpad(self):
+            self._padlevel = 0
             
         def debug(self, message: str): self.log(message, LogLevel.DEBUG)
         def info(self, message: str): self.log(message, LogLevel.INFO)
