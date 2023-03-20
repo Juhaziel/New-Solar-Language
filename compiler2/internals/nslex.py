@@ -114,12 +114,12 @@ class Lexer:
 
     def _error(self, code: int, error: str):
         "Throw an error and mark lex as unsuccessful but continue lexing."
-        self.logger.error(f"L{code:02} - {error}")
+        self.logger.error(f"{{L{code:02}}} {error}")
         self.success = False
     
     def _fatal(self, code: int, error: str):
         "Throw a fatal error which marks lex as unsuccessful and aborts."
-        self.logger.fatal(f"L{code:02} - {error}")
+        self.logger.fatal(f"{{L{code:02}}} - {error}")
         self.success = False
         raise Exception("nslex encountered a fatal error.")
     
