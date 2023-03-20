@@ -1,4 +1,4 @@
--- v0.8: added is_static
+-- v0.9: member data bits can only be integer now
 
 module IDK {
     Module = (Decl* decls)
@@ -14,7 +14,7 @@ module IDK {
          | UnionType(MemberData* members)
          attributes (boolean is_volatile)
     
-    MemberData = (ident name, Type type, Expr bits)
+    MemberData = (ident name, Type type, int? bits)
 
     Decl = VarDecl(Expr? value, boolean is_static)
          | ConstDecl(Expr value, boolean is_static)

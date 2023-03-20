@@ -276,11 +276,11 @@ class UnionType(Type):
 
 ## TYPE 'MemberData'
 class MemberData(AST):
-	def __init__(self, name: str, type: 'Type', bits: 'Expr'):
+	def __init__(self, name: str, type: 'Type', bits: int | None):
 		self._fields = ("name", "type", "bits")
 		self.name: str = name
 		self.type: 'Type' = type
-		self.bits: 'Expr' = bits
+		self.bits: int | None = bits
 
 ## TYPE 'Decl'
 class Decl(AST):
