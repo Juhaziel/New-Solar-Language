@@ -298,10 +298,10 @@ class VarDecl(Decl):
 		self.is_static: bool = is_static
 
 class ConstDecl(Decl):
-	def __init__(self, name: str, type: 'Type', description: str | None, value: 'Expr' | None, is_static: bool):
+	def __init__(self, name: str, type: 'Type', description: str | None, value: 'Expr', is_static: bool):
 		super().__init__(name, type, description)
 		self._fields = ("value", "is_static")
-		self.value: 'Expr' | None = value
+		self.value: 'Expr' = value
 		self.is_static: bool = is_static
 
 class FuncDecl(Decl):

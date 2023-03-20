@@ -17,7 +17,7 @@ module IDK {
     MemberData = (ident name, Type type, Expr bits)
 
     Decl = VarDecl(Expr? value, boolean is_static)
-         | ConstDecl(Expr? value, boolean is_static)
+         | ConstDecl(Expr value, boolean is_static)
          | FuncDecl(ident* param_names, Stmt? body, boolean is_static, boolean is_inline)
          | TypeDecl
          attributes (ident name, Type type, string? description)
