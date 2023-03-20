@@ -1,4 +1,4 @@
--- v0.7: added ComplexExpr (for complex init values)
+-- v0.8: added is_static
 
 module IDK {
     Module = (Decl* decls)
@@ -16,9 +16,9 @@ module IDK {
     
     MemberData = (ident name, Type type, Expr bits)
 
-    Decl = VarDecl(Expr? value)
-         | ConstDecl(Expr? value)
-         | FuncDecl(ident* param_names, Stmt? body, boolean is_inline)
+    Decl = VarDecl(Expr? value, boolean is_static)
+         | ConstDecl(Expr? value, boolean is_static)
+         | FuncDecl(ident* param_names, Stmt? body, boolean is_static, boolean is_inline)
          | TypeDecl
          attributes (ident name, Type type, string? description)
     

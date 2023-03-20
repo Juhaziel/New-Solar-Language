@@ -290,23 +290,26 @@ class Decl(AST):
 		self.description: str | None = description
 
 class VarDecl(Decl):
-	def __init__(self, name: str, type: 'Type', description: str | None, value: 'Expr' | None):
+	def __init__(self, name: str, type: 'Type', description: str | None, value: 'Expr' | None, is_static: bool):
 		super().__init__(name, type, description)
-		self._fields = ("value")
+		self._fields = ("value", "is_static")
 		self.value: 'Expr' | None = value
+		self.is_static: bool = is_static
 
 class ConstDecl(Decl):
-	def __init__(self, name: str, type: 'Type', description: str | None, value: 'Expr' | None):
+	def __init__(self, name: str, type: 'Type', description: str | None, value: 'Expr' | None, is_static: bool):
 		super().__init__(name, type, description)
-		self._fields = ("value")
+		self._fields = ("value", "is_static")
 		self.value: 'Expr' | None = value
+		self.is_static: bool = is_static
 
 class FuncDecl(Decl):
-	def __init__(self, name: str, type: 'Type', description: str | None, param_names: list[str], body: 'Stmt' | None, is_inline: bool):
+	def __init__(self, name: str, type: 'Type', description: str | None, param_names: list[str], body: 'Stmt' | None, is_static: bool, is_inline: bool):
 		super().__init__(name, type, description)
-		self._fields = ("param_names", "body", "is_inline")
+		self._fields = ("param_names", "body", "is_static", "is_inline")
 		self.param_names: list[str] = param_names
 		self.body: 'Stmt' | None = body
+		self.is_static: bool = is_static
 		self.is_inline: bool = is_inline
 
 class TypeDecl(Decl): pass
