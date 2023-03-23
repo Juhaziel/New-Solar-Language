@@ -1,0 +1,27 @@
+/*printf from C*/
+func printf(fmt: *int, ...) -> (int);
+
+/*find the n-th fibonacci number*/
+func Fibo(n: int) -> (int)
+{
+    struct Pair { a: int, b: int };
+    let p: Pair := struct { a : 0, b : 1 };
+    let count: int := 0;
+    while( (count+=1)-1 < n )
+    {
+        let temp: int := p.b;
+        p.b += p.a;
+        p.a := temp;
+    }
+    return p[1];
+}
+
+func main() -> (int)
+{
+    let n: int := 0;
+
+    for (;n<100; n+=1)
+        printf("%u. %u", n, Fibo(n));
+
+    return 0;
+}

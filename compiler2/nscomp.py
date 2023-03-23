@@ -49,11 +49,18 @@ def main(args):
         
         # Parse the source file
         try:
-            # TODO: Implement and call parser
+            parser = nsparse.Parser(tokens)
+            ast = parser.parse_module()
+            if not parser.success:
+                success = False
+                continue
+            else: complogger.info("parser phase succeeded.")
             pass
         except Exception as e:
             complogger.fatal(f"Parser threw uncaught exception with message: {e}")
+            success = False
             continue
+        del parser
         
         # Bake symbol table into AST
         try:
@@ -61,6 +68,7 @@ def main(args):
             pass
         except Exception as e:
             complogger.fatal(f"Symbol table builder threw uncaught exception with message: {e}")
+            success = False
             continue
         
         # Semantic analysis and basic simplification
@@ -69,6 +77,7 @@ def main(args):
             pass
         except Exception as e:
             complogger.fatal(f"Semantic analyser threw uncaught exception with message: {e}")
+            success = False
             continue
         
         # Generate assembly code
@@ -77,6 +86,7 @@ def main(args):
             pass
         except Exception as e:
             complogger.fatal(f"Assembly generator threw uncaught exception with message: {e}")
+            success = False
             continue
         
         complogger.info(f"successfully compiled \"{infile}\"")
