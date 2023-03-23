@@ -22,7 +22,7 @@ Keywords = (
     "void", "int", "long", "quad", # Basic types
     "volatile", # Type modifier
     "if", "else", "for", "while", # Conditional control flow
-    "break", "breakif", "continue", # Jump statements
+    "break", "breakif", "continue", "return", # Jump statements
 )
 
 Punctuators = (
@@ -30,7 +30,7 @@ Punctuators = (
     ".", ",", "->", ":", ";", # Punctuation gang
     "?", # Lonely ternary
     "as", # Casting
-    "$", # Label marker, when alone
+    "$", # Sign marker for casting
     "...", # variadic
     "szexpr", "sztype", # The sizing siblings
     "+", "-", "*", "/", "/$", "%", "%$", # Normal arithmetic, also dereference and unary plus/minus
