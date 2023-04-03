@@ -224,13 +224,13 @@ class NodeTransformer(NodeVisitor):
 ## TYPE 'Module'
 class Module(AST):
 	def __init__(self, decls: list['Decl']):
-		self._fields = ("decls")
+		self._fields = ("decls",)
 		self.decls: list['Decl'] = decls
 
 ## TYPE 'Type'
 class Type(AST):
 	def __init__(self, is_volatile: bool):
-		self._attribs = ("is_volatile")
+		self._attribs = ("is_volatile",)
 		self.is_volatile: bool = is_volatile
 
 class VoidType(Type): pass
@@ -238,26 +238,26 @@ class VoidType(Type): pass
 class RefType(Type):
 	def __init__(self, is_volatile: bool, ref_type_name: str):
 		super().__init__(is_volatile)
-		self._fields = ("ref_type_name")
+		self._fields = ("ref_type_name",)
 		self.ref_type_name: str = ref_type_name
 
 class IntType(Type):
 	def __init__(self, is_volatile: bool, type: str):
 		super().__init__(is_volatile)
-		self._fields = ("type")
+		self._fields = ("type",)
 		self.type: str = type
 
 class ArrayType(Type):
 	def __init__(self, is_volatile: bool, inner_type: 'Type', size: 'Expr' | None):
 		super().__init__(is_volatile)
-		self._fields = ("inner_type", "size")
+		self._fields = ("inner_type", "size",)
 		self.inner_type: 'Type' = inner_type
 		self.size: 'Expr' | None = size
 
 class FuncType(Type):
 	def __init__(self, is_volatile: bool, return_type: 'Type', param_types: list['Type'], is_variadic: bool):
 		super().__init__(is_volatile)
-		self._fields = ("return_type", "param_types", "is_variadic")
+		self._fields = ("return_type", "param_types", "is_variadic",)
 		self.return_type: 'Type' = return_type
 		self.param_types: list['Type'] = param_types
 		self.is_variadic: bool = is_variadic
@@ -265,19 +265,19 @@ class FuncType(Type):
 class StructType(Type):
 	def __init__(self, is_volatile: bool, members: list['MemberData']):
 		super().__init__(is_volatile)
-		self._fields = ("members")
+		self._fields = ("members",)
 		self.members: list['MemberData'] = members
 
 class UnionType(Type):
 	def __init__(self, is_volatile: bool, members: list['MemberData']):
 		super().__init__(is_volatile)
-		self._fields = ("members")
+		self._fields = ("members",)
 		self.members: list['MemberData'] = members
 
 ## TYPE 'MemberData'
 class MemberData(AST):
 	def __init__(self, name: str, type: 'Type', bits: int | None):
-		self._fields = ("name", "type", "bits")
+		self._fields = ("name", "type", "bits",)
 		self.name: str = name
 		self.type: 'Type' = type
 		self.bits: int | None = bits
@@ -285,7 +285,7 @@ class MemberData(AST):
 ## TYPE 'Decl'
 class Decl(AST):
 	def __init__(self, name: str, type: 'Type', description: str | None):
-		self._attribs = ("name", "type", "description")
+		self._attribs = ("name", "type", "description",)
 		self.name: str = name
 		self.type: 'Type' = type
 		self.description: str | None = description
@@ -293,21 +293,21 @@ class Decl(AST):
 class VarDecl(Decl):
 	def __init__(self, name: str, type: 'Type', description: str | None, value: 'Expr' | None, is_static: bool):
 		super().__init__(name, type, description)
-		self._fields = ("value", "is_static")
+		self._fields = ("value", "is_static",)
 		self.value: 'Expr' | None = value
 		self.is_static: bool = is_static
 
 class ConstDecl(Decl):
 	def __init__(self, name: str, type: 'Type', description: str | None, value: 'Expr', is_static: bool):
 		super().__init__(name, type, description)
-		self._fields = ("value", "is_static")
+		self._fields = ("value", "is_static",)
 		self.value: 'Expr' = value
 		self.is_static: bool = is_static
 
 class FuncDecl(Decl):
 	def __init__(self, name: str, type: 'Type', description: str | None, param_names: list[str], body: 'Stmt' | None, is_static: bool, is_inline: bool):
 		super().__init__(name, type, description)
-		self._fields = ("param_names", "body", "is_static", "is_inline")
+		self._fields = ("param_names", "body", "is_static", "is_inline",)
 		self.param_names: list[str] = param_names
 		self.body: 'Stmt' | None = body
 		self.is_static: bool = is_static
@@ -322,38 +322,38 @@ class EmptyStmt(Stmt): pass
 
 class DefStmt(Stmt):
 	def __init__(self, decl: 'Decl'):
-		self._fields = ("decl")
+		self._fields = ("decl",)
 		self.decl: 'Decl' = decl
 
 class CompoundStmt(Stmt):
 	def __init__(self, stmts: list['Stmt']):
-		self._fields = ("stmts")
+		self._fields = ("stmts",)
 		self.stmts: list['Stmt'] = stmts
 
 class ExprStmt(Stmt):
 	def __init__(self, expr: 'Expr'):
-		self._fields = ("expr")
+		self._fields = ("expr",)
 		self.expr: 'Expr' = expr
 
 class ContinueStmt(Stmt):
 	def __init__(self, label: str | None):
-		self._fields = ("label")
+		self._fields = ("label",)
 		self.label: str | None = label
 
 class BreakStmt(Stmt):
 	def __init__(self, breakif: bool, label: str | None):
-		self._fields = ("breakif", "label")
+		self._fields = ("breakif", "label",)
 		self.breakif: bool = breakif
 		self.label: str | None = label
 
 class ReturnStmt(Stmt):
 	def __init__(self, ret_expr: 'Expr' | None):
-		self._fields = ("ret_expr")
+		self._fields = ("ret_expr",)
 		self.ret_expr: 'Expr' | None = ret_expr
 
 class IfStmt(Stmt):
 	def __init__(self, cond_expr: 'Expr', body: 'Stmt', else_body: 'Stmt' | None, label: str | None):
-		self._fields = ("cond_expr", "body", "else_body", "label")
+		self._fields = ("cond_expr", "body", "else_body", "label",)
 		self.cond_expr: 'Expr' = cond_expr
 		self.body: 'Stmt' = body
 		self.else_body: 'Stmt' | None = else_body
@@ -361,7 +361,7 @@ class IfStmt(Stmt):
 
 class IterStmt(Stmt):
 	def __init__(self, init_expr: 'Expr' | None, cond_expr: 'Expr' | None, inc_expr: 'Expr' | None, body: 'Stmt', else_body: 'Stmt' | None, label: str | None):
-		self._fields = ("init_expr", "cond_expr", "inc_expr", "body", "else_body", "label")
+		self._fields = ("init_expr", "cond_expr", "inc_expr", "body", "else_body", "label",)
 		self.init_expr: 'Expr' | None = init_expr
 		self.cond_expr: 'Expr' | None = cond_expr
 		self.inc_expr: 'Expr' | None = inc_expr
@@ -374,119 +374,119 @@ class Expr(AST): pass
 
 class CompoundExpr(Expr):
 	def __init__(self, record_or_array_type: 'Type', exprs: list['Expr']):
-		self._fields = ("record_or_array_type", "exprs")
+		self._fields = ("record_or_array_type", "exprs",)
 		self.record_or_array_type: 'Type' = record_or_array_type
 		self.exprs: list['Expr'] = exprs
 
 class NameExpr(Expr):
 	def __init__(self, name: str):
-		self._fields = ("name")
+		self._fields = ("name",)
 		self.name: str = name
 
 class IntExpr(Expr):
 	def __init__(self, type: 'IntType', value: int):
-		self._fields = ("type", "value")
+		self._fields = ("type", "value",)
 		self.type: 'IntType' = type
 		self.value: int = value
 
 class StrExpr(Expr):
 	def __init__(self, utf8: list[int]):
-		self._fields = ("utf8")
+		self._fields = ("utf8",)
 		self.utf8: list[int] = utf8
 
 class SzexprExpr(Expr):
 	def __init__(self, expr: 'Expr'):
-		self._fields = ("expr")
+		self._fields = ("expr",)
 		self.expr: 'Expr' = expr
 
 class SztypeExpr(Expr):
 	def __init__(self, type: 'Type'):
-		self._fields = ("type")
+		self._fields = ("type",)
 		self.type: 'Type' = type
 
 class CallExpr(Expr):
 	def __init__(self, func_expr: 'Expr', args: list['Expr']):
-		self._fields = ("func_expr", "args")
+		self._fields = ("func_expr", "args",)
 		self.func_expr: 'Expr' = func_expr
 		self.args: list['Expr'] = args
 
 class IndexExpr(Expr):
 	def __init__(self, array_expr: 'Expr', index_expr: 'Expr'):
-		self._fields = ("array_expr", "index_expr")
+		self._fields = ("array_expr", "index_expr",)
 		self.array_expr: 'Expr' = array_expr
 		self.index_expr: 'Expr' = index_expr
 
 class AccessExpr(Expr):
 	def __init__(self, record_expr: 'Expr', member_name: str):
-		self._fields = ("record_expr", "member_name")
+		self._fields = ("record_expr", "member_name",)
 		self.record_expr: 'Expr' = record_expr
 		self.member_name: str = member_name
 
 class CastExpr(Expr):
 	def __init__(self, expr: 'Expr', cast_type: 'Type', signed: bool):
-		self._fields = ("expr", "cast_type", "signed")
+		self._fields = ("expr", "cast_type", "signed",)
 		self.expr: 'Expr' = expr
 		self.cast_type: 'Type' = cast_type
 		self.signed: bool = signed
 
 class DerefExpr(Expr):
 	def __init__(self, pointer_expr: 'Expr'):
-		self._fields = ("pointer_expr")
+		self._fields = ("pointer_expr",)
 		self.pointer_expr: 'Expr' = pointer_expr
 
 class AddrOfExpr(Expr):
 	def __init__(self, expr: 'Expr'):
-		self._fields = ("expr")
+		self._fields = ("expr",)
 		self.expr: 'Expr' = expr
 
 class UnaryExpr(Expr):
 	def __init__(self, op: 'UnaryOp', expr: 'Expr'):
-		self._fields = ("op", "expr")
+		self._fields = ("op", "expr",)
 		self.op: 'UnaryOp' = op
 		self.expr: 'Expr' = expr
 
 class UnaryCondExpr(Expr):
 	def __init__(self, op: 'UnaryCOp', expr: 'Expr'):
-		self._fields = ("op", "expr")
+		self._fields = ("op", "expr",)
 		self.op: 'UnaryCOp' = op
 		self.expr: 'Expr' = expr
 
 class BinaryExpr(Expr):
 	def __init__(self, left: 'Expr', op: 'BinOp', right: 'Expr'):
-		self._fields = ("left", "op", "right")
+		self._fields = ("left", "op", "right",)
 		self.left: 'Expr' = left
 		self.op: 'BinOp' = op
 		self.right: 'Expr' = right
 
 class BinaryCondExpr(Expr):
 	def __init__(self, left: 'Expr', op: 'BinCOp', right: 'Expr'):
-		self._fields = ("left", "op", "right")
+		self._fields = ("left", "op", "right",)
 		self.left: 'Expr' = left
 		self.op: 'BinCOp' = op
 		self.right: 'Expr' = right
 
 class TernaryExpr(Expr):
 	def __init__(self, cond_expr: 'Expr', true_expr: 'Expr', false_expr: 'Expr'):
-		self._fields = ("cond_expr", "true_expr", "false_expr")
+		self._fields = ("cond_expr", "true_expr", "false_expr",)
 		self.cond_expr: 'Expr' = cond_expr
 		self.true_expr: 'Expr' = true_expr
 		self.false_expr: 'Expr' = false_expr
 
 class AssignExpr(Expr):
 	def __init__(self, lhs: 'Expr', rhs: 'Expr', op: 'BinOp' | None):
-		self._fields = ("lhs", "rhs", "op")
+		self._fields = ("lhs", "rhs", "op",)
 		self.lhs: 'Expr' = lhs
 		self.rhs: 'Expr' = rhs
 		self.op: 'BinOp' | None = op
 
 class CommaExpr(Expr):
 	def __init__(self, exprs: list['Expr']):
-		self._fields = ("exprs")
+		self._fields = ("exprs",)
 		self.exprs: list['Expr'] = exprs
 
 class ComplexExpr(Expr):
 	def __init__(self, type: str, value: 'any'):
-		self._fields = ("type", "value")
+		self._fields = ("type", "value",)
 		self.type: str = type
 		self.value: 'any' = value
 
