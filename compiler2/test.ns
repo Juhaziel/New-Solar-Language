@@ -13,7 +13,7 @@ func Fibo(n: int) -> (int)
         p.b += p.a;
         p.a := temp;
     }
-    return p[1];
+    return p.b;
 }
 
 func main() -> (int)

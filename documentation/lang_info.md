@@ -89,7 +89,7 @@ struct NAME { MEMBERS } ;`
 union  NAME { MEMBERS } ;`
 ```
 
-These can also be used within a local scope
+These can also be used within a local scope where they can be used before or after declaration.
 
 ## LOCAL SCOPE #
 Local scope represents the scope inside of functions and is individual to each one. It contains statements that are executed in order and declarations.

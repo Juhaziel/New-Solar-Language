@@ -7,6 +7,7 @@ sys.path.insert(0, compiler_dir)
 import internals.nslex as nslex
 import internals.nsparse as nsparse
 import internals.nslog as nslog
+import internals.nsstbuilder as nsst
 
 # Get Compiler logger
 complogger = nslog.LoggerFactory.getLogger()
@@ -35,6 +36,7 @@ def main(args):
         
         # Lex the source file
         try:
+            complogger.resetpad()
             lexer = nslex.Lexer(insource)
             tokens = lexer.lex_all()
             if not lexer.success:
@@ -49,13 +51,13 @@ def main(args):
         
         # Parse the source file
         try:
+            complogger.resetpad()
             parser = nsparse.Parser(tokens)
             ast = parser.parse_module()
             if not parser.success:
                 success = False
                 continue
             else: complogger.info("parser phase succeeded.")
-            pass
         except Exception as e:
             complogger.fatal(f"Parser threw uncaught exception with message: {e}")
             success = False
@@ -64,8 +66,11 @@ def main(args):
         
         # Bake symbol table into AST
         try:
-            # TODO: Implement and call symbol table node visitor
-            pass
+            complogger.resetpad()
+            if not nsst.GenerateTable(ast):
+                success = False
+                continue
+            else: complogger.info("symbol table builder phase succeeded.")
         except Exception as e:
             complogger.fatal(f"Symbol table builder threw uncaught exception with message: {e}")
             success = False
@@ -73,6 +78,7 @@ def main(args):
         
         # Semantic analysis and basic simplification
         try:
+            complogger.resetpad()
             # TODO: Implement and call semantic analyser
             pass
         except Exception as e:
@@ -82,6 +88,7 @@ def main(args):
         
         # Generate assembly code
         try:
+            complogger.resetpad()
             # TODO: Implement and call code generator
             pass
         except Exception as e:
