@@ -172,12 +172,18 @@ class Parser:
     
     def parse_module(self) -> ast.Module:
         "Parses an entire module (program file)."
+        start_loc = end_loc = self._snapshot()
         decls = []
         while self._peek(skip_comment=False).iscomment():
             self._eat(skip_comment=False)
         while not self._peek().iseof():
             decls.append(self.parse_global_decl())
-        return ast.Module(decls=decls)
+            end_loc = decls[-1].end_lineno, decls[-1].end_col_offset
+        
+        modl = ast.Module(decls=decls)
+        modl.lineno, modl.col_offset = start_loc
+        modl.end_lineno, modl.end_col_offset = end_loc
+        return modl
     
     # DECLARATION PARSING #
     def can_parse_global_decl(self) -> bool:
