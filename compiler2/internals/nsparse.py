@@ -579,6 +579,13 @@ class Parser:
         self.logger.debug(f"{start_pos} began parsing Stmt node")
         self.logger.increasepad()
         
+        def wrapIfNotCompoundStmt(stmt: ast.Stmt):
+            if isinstance(stmt, ast.CompoundStmt): return stmt
+            cstmt = ast.CompoundStmt([stmt])
+            cstmt.lineno, cstmt.col_offset = stmt.lineno, stmt.col_offset
+            cstmt.end_lineno, cstmt.end_col_offset = stmt.end_lineno, stmt.end_col_offset
+            return cstmt
+        
         # Figure out the type of Stmt
         if not self.can_parse_stmt():
             self._fatal(Parser.L_WRONGTOKEN, f"{start_pos} expected statement but could not match pattern")
@@ -651,9 +658,7 @@ class Parser:
                 self._eat(TokenType.PUNC, ")")
                 
                 # Parse body
-                body = self.parse_stmt()
-                if not isinstance(body, ast.CompoundStmt):
-                    body = ast.CompoundStmt([body])
+                body = wrapIfNotCompoundStmt(self.parse_stmt())
                 node = ast.IfStmt(cond_expr=cond_expr, body=body, else_body=None, label=label)
                 del cond_expr, body
             elif token.iskeyword("while"):
@@ -666,9 +671,7 @@ class Parser:
                 self._eat(TokenType.PUNC, ")")
                 
                 # Parse body
-                body = self.parse_stmt()
-                if not isinstance(body, ast.CompoundStmt):
-                    body = ast.CompoundStmt([body])
+                body = wrapIfNotCompoundStmt(self.parse_stmt())
                 node = ast.IterStmt(init_expr=None, cond_expr=cond_expr, inc_expr=None, body=body, else_body=None, label=label)
                 del cond_expr, body
             elif token.iskeyword("for"):
@@ -693,9 +696,7 @@ class Parser:
                 self._eat(TokenType.PUNC, ")")
                 
                 # Parse body
-                body = self.parse_stmt()
-                if not isinstance(body, ast.CompoundStmt):
-                    body = ast.CompoundStmt([body])
+                body = wrapIfNotCompoundStmt(self.parse_stmt())
                 node = ast.IterStmt(init_expr=init_expr, cond_expr=cond_expr, inc_expr=inc_expr, body=body, else_body=None, label=label)
                 del init_expr, cond_expr, inc_expr, body
             else:
@@ -704,9 +705,7 @@ class Parser:
             # Check for an else_body
             if self._peek().iskeyword("else"):
                 self._eat()
-                node.else_body = self.parse_stmt()
-                if not isinstance(node.else_body):
-                    node.else_body = ast.CompoundStmt([node.else_body])
+                node.else_body = wrapIfNotCompoundStmt(self.parse_stmt())
             del label
             self.logger.decreasepad()
         elif self.can_parse_decl():
