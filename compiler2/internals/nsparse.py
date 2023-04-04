@@ -652,6 +652,8 @@ class Parser:
                 
                 # Parse body
                 body = self.parse_stmt()
+                if not isinstance(body, ast.CompoundStmt):
+                    body = ast.CompoundStmt([body])
                 node = ast.IfStmt(cond_expr=cond_expr, body=body, else_body=None, label=label)
                 del cond_expr, body
             elif token.iskeyword("while"):
@@ -665,6 +667,8 @@ class Parser:
                 
                 # Parse body
                 body = self.parse_stmt()
+                if not isinstance(body, ast.CompoundStmt):
+                    body = ast.CompoundStmt([body])
                 node = ast.IterStmt(init_expr=None, cond_expr=cond_expr, inc_expr=None, body=body, else_body=None, label=label)
                 del cond_expr, body
             elif token.iskeyword("for"):
@@ -690,6 +694,8 @@ class Parser:
                 
                 # Parse body
                 body = self.parse_stmt()
+                if not isinstance(body, ast.CompoundStmt):
+                    body = ast.CompoundStmt([body])
                 node = ast.IterStmt(init_expr=init_expr, cond_expr=cond_expr, inc_expr=inc_expr, body=body, else_body=None, label=label)
                 del init_expr, cond_expr, inc_expr, body
             else:
@@ -699,6 +705,8 @@ class Parser:
             if self._peek().iskeyword("else"):
                 self._eat()
                 node.else_body = self.parse_stmt()
+                if not isinstance(node.else_body):
+                    node.else_body = ast.CompoundStmt([node.else_body])
             del label
             self.logger.decreasepad()
         elif self.can_parse_decl():
