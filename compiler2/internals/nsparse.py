@@ -1,6 +1,6 @@
+from collections import OrderedDict
 import internals.astnodes as ast
 import internals.nslog as nslog
-import internals.nstypes as nstypes
 from internals.nslex import Token, TokenType
 
 """
@@ -1205,7 +1205,7 @@ class Parser:
         self.logger.debug(f"{start_pos} began parsing list of named init_expr")
         self.logger.increasepad()
         
-        elts: dict[str, ast.ComplexExpr | ast.Expr] = dict()
+        elts: dict[str, ast.ComplexExpr | ast.Expr] = OrderedDict()
         while True:
             name = self._eat(TokenType.NAME)
             if name in elts:

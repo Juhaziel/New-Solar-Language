@@ -246,5 +246,8 @@ class TypeSymbol(Symbol):
     def __init__(self, name: str, type: ast.Type):
         super().__init__(name)
         self._type = type
+        
+    def get_type(self) -> ast.Type:
+        return self._type
 
 class LabelSymbol(Symbol): pass
