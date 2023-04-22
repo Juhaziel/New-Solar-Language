@@ -209,8 +209,8 @@ class ConstSymbol(NameSymbol):
         "Return `True` if the constant is static"
         return self._isstatic
     
-    def get_node(self) -> ast.VarDecl:
-        "Return the VarDecl node associated to this symbol"
+    def get_node(self) -> ast.ConstDecl:
+        "Return the ConstDecl node associated to this symbol"
         return self._node
     
     def get_namesymbol_type(self) -> str:
@@ -250,4 +250,11 @@ class TypeSymbol(Symbol):
     def get_type(self) -> ast.Type:
         return self._type
 
-class LabelSymbol(Symbol): pass
+class LabelSymbol(Symbol):
+    def __init__(self, name: str, node: ast.IfStmt | ast.IterStmt):
+        super().__init__(name)
+        self._node = node
+        
+    def get_node(self) -> ast.IfStmt | ast.IterStmt:
+        "Return the IfStmt or IterStmt node associated to this symbol"
+        return self._node

@@ -73,6 +73,9 @@ def ExpandType(scope: nsst.SymbolTable, type: ast.Type, recursive: bool=True) ->
     if not isinstance(type, ast.Type): return None
     while isinstance(type, ast.RefType):
         type = scope.get_typesym(type.ref_type_name)
+        if type == None: break
+        scope = type.get_table()
+        type = type.get_type()
         if not recursive: break
     return type
 
@@ -93,9 +96,9 @@ def CompareTypesEquiv(scope: nsst.SymbolTable, type1: ast.Type, type2: ast.Type)
     # Func types match if they have the same properties
     if isinstance(type1, ast.FuncType):
         if type1.is_variadic != type2.is_variadic: return False
-        if not CompareTypesEquiv(type1.return_type, type2.return_type): return False
+        if not CompareTypesEquiv(scope, type1.return_type, type2.return_type): return False
         if len(type1.param_types) != len(type2.param_types): return False
-        return False not in map(lambda p1, p2: CompareTypesEquiv(p1, p2), zip(type1.param_types, type2.param_types))
+        return False not in map(lambda p1, p2: CompareTypesEquiv(scope, p1, p2), zip(type1.param_types, type2.param_types))
     
     # Struct types match if they have the same members
     if isinstance(type1, (ast.StructType, ast.UnionType)):
@@ -103,8 +106,12 @@ def CompareTypesEquiv(scope: nsst.SymbolTable, type1: ast.Type, type2: ast.Type)
         def memEq(m1: ast.MemberData, m2: ast.MemberData) -> bool:
             if m1.name != m2.name: return False
             if m1.bits != m2.bits: return False
-            return CompareTypesEquiv(m1.type, m2.type)
-        return False not in map(memEq, zip(type1.members, type2.members))
+            return CompareTypesEquiv(scope, m1.type, m2.type)
+        return False not in [memEq(m1, m2) for m1,m2 in zip(type1.members, type2.members)]
+    
+    # Expand ArrayTypes
+    if isinstance(type1, ast.ArrayType):
+        return CompareTypesEquiv(type1.inner_type, type2.inner_type)
     
     # Otherwise just check normally
     return CompareTypesEq(type1, type2)
@@ -340,6 +347,28 @@ class __STNodeVisitor(ast.NodeVisitor):
         self.logger.decreasepad()
         return cdecl
     
+    def visit_IfStmt(self, istmt: ast.IfStmt) -> ast.AST:
+        super().generic_visit(istmt)
+        
+        if istmt.label != None:
+            labelsym = nsst.LabelSymbol(istmt.label, istmt)
+            istmt.body.symref._bind_symbol(istmt.label, labelsym)
+            if istmt.else_body != None:
+                istmt.else_body.symref._bind_symbol(istmt.label, labelsym)
+                
+        return istmt
+    
+    def visit_IterStmt(self, istmt: ast.IterStmt) -> ast.AST:
+        super().generic_visit(istmt)
+        
+        if istmt.label != None:
+            labelsym = nsst.LabelSymbol(istmt.label, istmt)
+            istmt.body.symref._bind_symbol(istmt.label, labelsym)
+            if istmt.else_body != None:
+                istmt.else_body.symref._bind_symbol(istmt.label, labelsym)
+                
+        return istmt
+    
     def visit_NameExpr(self, nexpr: ast.NameExpr) -> ast.AST:
         namesym = self.curtab.get_namesym(nexpr.name)
         if namesym == None:
@@ -350,3 +379,5 @@ class __STNodeVisitor(ast.NodeVisitor):
         
         self.logger.debug(f"linked NameExpr {nexpr.name} to symbol at {(nexpr.lineno, nexpr.col_offset)}-{(nexpr.end_lineno, nexpr.end_col_offset)}.")
         return nexpr
+    
+    # Type symbols are checked by  the semantic checker
