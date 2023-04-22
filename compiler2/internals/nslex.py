@@ -257,7 +257,7 @@ class Lexer:
         base = 10 # Assume decimal
         
         if self._peek() == '0':
-            if (peek := self._peek(ahead=1).lower()) and peek.isalpha():
+            if (peek := self._peek(ahead=1).lower()) and peek.isalpha() and peek.lower() not in "ilq":
                 self._advance()
                 if   peek == "b": base = 2
                 elif peek == "o": base = 8
@@ -331,7 +331,7 @@ class Lexer:
                 except ValueError:
                     self._fatal(Lexer.L_INVALIDUNICODECHAR, f"{pos}: invalid unicode literal '\\{m.group()}'")
                 return val, False
-            elif (m := re.match(r"^u([0-9a-fA-F]{8})", self._peek(9))):
+            elif (m := re.match(r"^U([0-9a-fA-F]{8})", self._peek(9))):
                 self._advance(len(m.group())-1)
                 val = int(m.group(1), base=16)
                 try:
@@ -377,6 +377,8 @@ class Lexer:
         
         def int_to_smallest_bytes(val: int) -> bytes:
             from math import ceil, log
+            if val == 0: return b"\0"
+            if val == 1: return b"\1"
             length = ceil(log(val)/log(256))
             return val.to_bytes(length, "big")
         

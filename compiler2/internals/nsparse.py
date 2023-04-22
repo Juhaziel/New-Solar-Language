@@ -679,7 +679,7 @@ class Parser:
                 self.logger.increasepad()
                 
                 init_expr = None
-                cond_expr = ast.IntExpr("int", 1)
+                cond_expr = ast.IntExpr(ast.IntType(is_volatile=False, type="int"), 1)
                 inc_expr = None
                 
                 # Parse condition
@@ -750,7 +750,11 @@ class Parser:
         
         if self._peek().isstring():
             self.logger.debug("found string")
-            node = ast.ComplexExpr("str", self._peek().value)
+            node = ast.ComplexExpr("str", [
+                ast.IntExpr(
+                    type=ast.IntType(is_volatile=False, type="int"),
+                    value=val)
+                for val in self._peek().value])
             self._eat()
         elif self._peek().ispunc("{"):
             self.logger.debug("found array")
@@ -845,7 +849,7 @@ class Parser:
     def can_parse_atom(self) -> bool:
         "Returns true if the next few tokens allow for parsing an expression atom"
         token = self._peek()
-        if token.iskeyword(("szexpr", "sztype")): return True
+        if token.ispunc(("szexpr", "sztype")): return True
         if token.ispunc("("): return True
         if token.isstring(): return True
         if token.isint(): return True
@@ -863,14 +867,14 @@ class Parser:
         if not self.can_parse_atom():
             self._fatal(Parser.L_WRONGTOKEN, f"{start_pos} expected statement but could not match pattern")
         token = self._peek()
-        if token.iskeyword("szexpr"):
+        if token.ispunc("szexpr"):
             self.logger.debug("found szexpr()")
             self._eat()
             self._eat(TokenType.PUNC, "(")
             expr = self.__parse_expr_inner(0)
             self._eat(TokenType.PUNC, ")")
             node = ast.SzexprExpr(expr=expr)
-        elif token.iskeyword("sztype"):
+        elif token.ispunc("sztype"):
             self.logger.debug("found sztype()")
             self._eat()
             self._eat(TokenType.PUNC, "(")
@@ -880,7 +884,7 @@ class Parser:
         elif token.ispunc("("):
             self.logger.debug("found parenthesis atom")
             self._eat()
-            expr = self.__parse_expr_inner(0)
+            expr = self.parse_expr()
             self._eat(TokenType.PUNC, ")")
             node = expr
         elif token.isstring():
@@ -889,6 +893,7 @@ class Parser:
         elif token.isint():
             self.logger.debug("found integer literal")
             value, type = self._eat().value
+            type = ast.IntType(is_volatile=False, type=type)
             node = ast.IntExpr(type=type, value=value)
         elif token.isname():
             self.logger.debug("found name")
@@ -1207,7 +1212,7 @@ class Parser:
         
         elts: dict[str, ast.ComplexExpr | ast.Expr] = OrderedDict()
         while True:
-            name = self._eat(TokenType.NAME)
+            name = self._eat(TokenType.NAME).value
             if name in elts:
                 self._fatal(Parser.L_COMPLEX_REPEAT_KEY, f"{self._peek(-1).start_pos} cannot have repeated key '{name}' in init expression")
             self._eat(TokenType.PUNC, ":")
