@@ -21,7 +21,7 @@ No expression of type `void` can be used as parts of other expressions and may o
 ### ARRAYS ###
 Arrays are represented by a prefixed `[n]` where `n` is the amount of times to allocate space for the underlying type. These arrays can be casted to and from pointers to the same underlying type.
 
-`n` must be left unspecified if the variable is initialized to a string or other list of expressions.
+`n` must be left unspecified if the variable is initialized to a string or other list of expressions. In this case, the size will automatically be detected unless the type of the declaration is an alias.
 
 ### STRUCTURES AND BITFIELDS ###
 Structures and bitfields are complex types that contain multiple members accessible via the dot operator.
@@ -81,7 +81,7 @@ The `inline` keyword forces a function to be inlined where it is called and is a
 If the last parameter of a function signature's parameter list is "...", then
 
 ### Type definitions ###
-Types can only be defined once. As such, it is recommended to import them only once through a header file with the `#import` preprocessor directive.
+Types can only be defined once per scope. As such, it is recommended to import them only once through a header file with the `#import` preprocessor directive.
 
 ```
 using  NAME = TYPE ;`
@@ -134,7 +134,7 @@ Return statements return an expression which much be the same type as the functi
 
 For `void` functions, there must be no expression.
 
-If the end of the function is reached before any return statement, one is implicitly executed with value 0 (for non-void) or no value (for void).
+If the end of a non-`void` function is reached before any return statement, behaviour is undefined. If instead an expression of a different type is returned, this is an error.
 
 #### If Statement ####
 ```
@@ -170,7 +170,15 @@ sztype ( TYPE ) | Size of type
 ```
 
 ##### Casting #####
-An unsigned cast can be done with the suffix keyword `as`. Following it by `$` will make a signed cast.
+An unsigned cast can be done with the suffix keyword `as`. Following it by `$` will make a signed cast, but doing this on non-integral types is an error.
+
+Integers, arrays, pointers, and function can all be casted to one another.
+
+Structures and unions may only be casted to each other if they are equivalent (same members with the same names).
+
+Non-logical binary expressions automatically cast their right operand to the same type as their left operand.
+
+If any pointer or array type is present in a binary expression, the only operations supported are addition, subtraction, equal, not equal, logical AND, logical OR.
 
 ##### Operators #####
 ```
