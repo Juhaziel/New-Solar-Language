@@ -372,12 +372,6 @@ class IterStmt(Stmt):
 ## TYPE 'Expr'
 class Expr(AST): pass
 
-class CompoundExpr(Expr):
-	def __init__(self, record_or_array_type: 'Type', exprs: list['Expr']):
-		self._fields = ("record_or_array_type", "exprs",)
-		self.record_or_array_type: 'Type' = record_or_array_type
-		self.exprs: list['Expr'] = exprs
-
 class NameExpr(Expr):
 	def __init__(self, name: str):
 		self._fields = ("name",)

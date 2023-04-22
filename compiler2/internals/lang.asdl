@@ -34,9 +34,7 @@ module IDK {
          | IfStmt(Expr cond_expr, Stmt body, Stmt? else_body, ident? label)
          | IterStmt(Expr? init_expr, Expr? cond_expr, Expr? inc_expr, Stmt body, Stmt? else_body, ident? label)
 
-    Expr = CompoundExpr(Type record_or_array_type, Expr* exprs)
-
-         | NameExpr(ident name) -- Represents a reference to some sort identifier in the symbol table
+    Expr = NameExpr(ident name) -- Represents a reference to some sort identifier in the symbol table
          | IntExpr(IntType type, int value)
          | StrExpr(char* utf8)
          | SzexprExpr(Expr expr)
