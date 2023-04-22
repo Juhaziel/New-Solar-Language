@@ -8,6 +8,7 @@ import internals.nslex as nslex
 import internals.nsparse as nsparse
 import internals.nslog as nslog
 import internals.nsstbuilder as nsst
+import internals.nschk as nschk
 
 # Get Compiler logger
 complogger = nslog.LoggerFactory.getLogger()
@@ -79,7 +80,12 @@ def main(args):
         # Semantic analysis and basic simplification
         try:
             complogger.resetpad()
-            # TODO: Implement and call semantic analyser
+            checker = nschk.Checker()
+            checker.visit(ast)
+            if not checker.success:
+                success = False
+                continue
+            else: complogger.info("semantic analysis phase succeeded.")
             pass
         except Exception as e:
             complogger.fatal(f"Semantic analyser threw uncaught exception with message: {e}")
