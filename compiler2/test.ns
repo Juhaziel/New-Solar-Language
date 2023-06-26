@@ -1,10 +1,21 @@
+set PI: int := 314159;
+let num: int := 1372;
+let num2: int;
+let num2: int := 1234;
+static let my_test: struct {a:int, b:int} := struct { a : 0, b : 1 };
+let my_test2: [1 as *int]int := { 0 }; /* This should fail later on */
+
 /*printf from C*/
 func printf(fmt: *int, ...) -> (int);
 
+func main() -> (int);
+
 /*find the n-th fibonacci number*/
-func Fibo(n: int) -> (int)
+static func Fibo(n: int) -> (int)
 {
     struct Pair { a: int, b: int };
+    static let c: Pair := struct { a: 1, b: 2};
+
     let p: Pair := struct { a : 0, b : 1 };
     let count: int := 0;
     while( (count+=1)-1 < n )
@@ -18,10 +29,29 @@ func Fibo(n: int) -> (int)
 
 func main() -> (int)
 {
+    static let x: int := 1;
+
     let n: int := 0;
 
     for (;n<100; n+=1)
         printf("%u. %u", n, Fibo(n));
 
     return 0;
+}
+
+func test() -> (void)
+{
+    let x: *func(int)->(int) := 0 as *func(int)->(int);
+    let y: int := 0;
+
+
+    {
+        let my_test: [2]long := { 1l, 2l };
+    }
+
+    {
+        let my_test: [5]long := { 1l, 2l, 3l, 4l, 5l };
+    }
+
+    (*x)(y);
 }
