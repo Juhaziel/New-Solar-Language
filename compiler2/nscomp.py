@@ -1,4 +1,4 @@
-import sys, os, io
+import sys, os, traceback
 import argparse
 
 # Making sure we're fetching the right stuff here
@@ -9,6 +9,7 @@ import internals.nsparse as nsparse
 import internals.nslog as nslog
 import internals.nsstbuilder as nsst
 import internals.nschk as nschk
+import internals.nscgen as nscgen
 
 # Get Compiler logger
 complogger = nslog.LoggerFactory.getLogger()
@@ -28,6 +29,8 @@ argparser.parse_args()
 # Actual compilation
 def main(args):
     success=True
+    exception_output = []
+    
     for infile in args.infile:
         print(f"\n-- in \"{infile}\"")
         
@@ -47,6 +50,7 @@ def main(args):
         except Exception as e:
             complogger.fatal(f"Lexer threw uncaught exception with message: {e}")
             success = False
+            exception_output.append([infile, e])
             continue
         del lexer
         
@@ -62,6 +66,7 @@ def main(args):
         except Exception as e:
             complogger.fatal(f"Parser threw uncaught exception with message: {e}")
             success = False
+            exception_output.append([infile, e])
             continue
         del parser
         
@@ -75,6 +80,7 @@ def main(args):
         except Exception as e:
             complogger.fatal(f"Symbol table builder threw uncaught exception with message: {e}")
             success = False
+            exception_output.append([infile, e])
             continue
         
         # Semantic analysis and basic simplification
@@ -90,23 +96,47 @@ def main(args):
         except Exception as e:
             complogger.fatal(f"Semantic analyser threw uncaught exception with message: {e}")
             success = False
+            exception_output.append([infile, e])
             continue
         
         # Generate assembly code
         try:
             complogger.resetpad()
-            # TODO: Implement and call code generator
+            codegen = nscgen.Generator()
+            codegen.visit(ast)
+            if not codegen.success:
+                success = False
+                continue
+            else: complogger.info("code generation phase succeeded.")
+            
+            assembly = nscgen.to_assembly(codegen)
+            
             pass
         except Exception as e:
             complogger.fatal(f"Assembly generator threw uncaught exception with message: {e}")
             success = False
+            exception_output.append([infile, e])
             continue
+        
+        outfile = os.path.join(
+            args.dir,
+            os.path.splitext(os.path.basename(infile))[0] + ".s")
+        os.makedirs(args.dir, exist_ok=True)
+        
+        with open(outfile, "w") as f:
+            for line in assembly:
+                f.write(line)
         
         complogger.info(f"successfully compiled \"{infile}\"")
     if success:
         print(f"[SUCCESS] compilation of {len(args.infile)} file(s) succeeded.")
     else:
         print(f"[FAILED] compilation of {len(args.infile)} file(s) failed.")
+        
+    with open("except_out.txt", "w") as f:
+        for exception in exception_output:
+            f.write(f"in {exception[0]}\n")
+            f.write("".join(traceback.format_exception(exception[1])) + "\n\n--------------\n")
 
 if __name__ == "__main__":
     args = argparser.parse_args()

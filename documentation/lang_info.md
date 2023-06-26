@@ -73,7 +73,9 @@ A global identifier can only have one definition which overwrites any previous d
 inline   func  NAME ( PARAMS ) -> ( TYPE ) { STMT ... }
 ```
 
-Constants must be of a simple type.
+Constants must be of a simple integral type.
+
+Static variable and functions can only be declared once and must immediately be given a value/body.
 
 The `inline` keyword forces a function to be inlined where it is called and is automatically static. Inlined functions ignore the nomangle rule as they are not assigned a memory address.
 
@@ -98,10 +100,10 @@ Local scope represents the scope inside of functions and is individual to each o
 
 #### Definition Statement ####
 ```
-(static) let NAME : TYPE (:= INIT_EXPR) ;
+(static) let NAME : TYPE := INIT_EXPR ;
 ```
 
-If an initial value is not provided, the variables will either be left uninitialized (not static) or initialized to 0 (static)
+An initial value must be given for function-local variables.
 
 #### Compound Statement ####
 ```
@@ -226,7 +228,7 @@ Left-to-right
 
 The default calling convention supports variadic functions.
 - Parameters are pushed from right to left.
-- Integral and pointer types are returned through registers.
+- Integral and pointer types are returned through registers A and B (A for int, BA for long).
 - Structs and unions are returned by copy through a caller-created space before the return address
 
 The call stack is as such:
@@ -246,8 +248,6 @@ The call stack is as such:
 | ...
 ```
 
-The four registers used to return integral types are considered volatile (they must be saved by the caller).
-
-In Mercury, these are, from highest to lowest, D, C, B, A (A for Int, BA for Long and Pointers, DCBA for Quad)
+In Mercury, the first four general purpose registers (A, B, C, D) are considered volatile (they must be saved by the caller).
 
 All other registers must be saved and restored by the callee.

@@ -19,7 +19,7 @@ Keywords = (
     "using", # Type reference definition
     "static", # Access modifier
     "inline", # Function modifier
-    "void", "int", "long", "quad", # Basic types
+    "void", "int", "long", # Basic types
     "volatile", # Type modifier
     "if", "else", "for", "while", # Conditional control flow
     "break", "breakif", "continue", "return", # Jump statements
@@ -349,7 +349,7 @@ class Lexer:
         """
         Reads a numeric literal's base suffix.
         
-        Accepts i, l, q.
+        Accepts i, l.
         """
         pos = None
         int_type = "int"
@@ -357,7 +357,6 @@ class Lexer:
             peek = peek.lower()
             if   peek == "i": int_type = "int"
             elif peek == "l": int_type = "long"
-            elif peek == "q": int_type = "quad"
             else: self._fatal(Lexer.L_INVALIDINTSUFFIX, f"{pos}: invalid numeric literal base suffix '{peek}'")
             pos = self._snapshot()
             self._advance()

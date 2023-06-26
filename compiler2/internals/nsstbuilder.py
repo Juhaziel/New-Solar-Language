@@ -62,7 +62,7 @@ def CompareTypesEq(type1: ast.Type, type2: ast.Type) -> bool:
             m1 = m[0]
             m2 = m[1]
             if m1.name != m2.name: return False
-            if m1.bits != m2.bits: return False
+            if m2.bits != -1 and m1.bits != m2.bits: return False # Additional -1 check for ComplexExpression
             return CompareTypesEq(m1.type, m2.type)
         return False not in map(memEq, zip(type1.members, type2.members))
         
@@ -98,14 +98,14 @@ def CompareTypesEquiv(scope: nsst.SymbolTable, type1: ast.Type, type2: ast.Type)
         if type1.is_variadic != type2.is_variadic: return False
         if not CompareTypesEquiv(scope, type1.return_type, type2.return_type): return False
         if len(type1.param_types) != len(type2.param_types): return False
-        return False not in map(lambda p1, p2: CompareTypesEquiv(scope, p1, p2), zip(type1.param_types, type2.param_types))
+        return False not in map(lambda p: CompareTypesEquiv(scope, p[0], p[1]), zip(type1.param_types, type2.param_types))
     
     # Struct types match if they have the same members
     if isinstance(type1, (ast.StructType, ast.UnionType)):
         if len(type1.members) != len(type2.members): return False
         def memEq(m1: ast.MemberData, m2: ast.MemberData) -> bool:
             if m1.name != m2.name: return False
-            if m1.bits != m2.bits: return False
+            if m2.bits != -1 and m1.bits != m2.bits: return False # Additional -1 check for complex expressions
             return CompareTypesEquiv(scope, m1.type, m2.type)
         return False not in [memEq(m1, m2) for m1,m2 in zip(type1.members, type2.members)]
     
@@ -332,7 +332,7 @@ class __STNodeVisitor(ast.NodeVisitor):
         # Check that constant doesn't already exist
         constsym = self.curtab.get_namesym(cdecl.name, localonly=True)
         if constsym != None:
-            self._fatal(self.L_CANNOT_REDEFINE, f"{(cdecl.lineno, cdecl.col_offset)} cannot define constant {constsym.get_name()}.")
+            self._fatal(self.L_CANNOT_REDEFINE, f"{(cdecl.lineno, cdecl.col_offset)} cannot redefine constant {constsym.get_name()}.")
         
         # Create symbol
         constsym = nsst.ConstSymbol(cdecl.name, cdecl.type, cdecl.is_static, cdecl)

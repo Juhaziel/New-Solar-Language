@@ -26,7 +26,7 @@ type_decl := "using" NAME ':=' type ';' {COMMENT}
            | "union" NAME record_def ';' {COMMENT}
            ;
 
-type := "int" | "long" | "quad" | "void"
+type := "int" | "long" | "void"
       | "volatile" type
       | '*' type
       | '[' (s_expr) ']' type
@@ -257,6 +257,8 @@ class Parser:
         
         # Get body and comment
         if self._peek().ispunc(";"): # No body, header only
+            if is_static:
+                self._fatal(Parser.L_MISSINGVALUE, f"{self._snapshot()}: expected a function body for static function {name}, got nothing.")
             self._eat()
             body = None
         elif self._peek().ispunc("{"): # Has body
@@ -349,6 +351,8 @@ class Parser:
         if self._peek().ispunc(":="):
             self._eat(TokenType.PUNC, ":=")
             value = self.parse_init_expr()
+        elif is_static:
+            self._fatal(Parser.L_MISSINGVALUE, f"{self._snapshot()}: expected an initial value for static variable {name}, got nothing.")
         self._eat(TokenType.PUNC, ";")
         
         # Get comment
@@ -420,7 +424,7 @@ class Parser:
     def can_parse_type(self) -> bool:
         "Returns true if the next few tokens allow for parsing a type"
         token = self._peek()
-        if token.iskeyword(("void", "int", "long", "quad", "func", "struct", "union")): return True
+        if token.iskeyword(("void", "int", "long", "func", "struct", "union")): return True
         if token.ispunc(('*', '[')): return True
         if token.isname(): return True
         if token.iskeyword("volatile") and not self._peek().iskeyword("volatile"): return True
@@ -446,7 +450,7 @@ class Parser:
             if is_volatile:
                 self._error(Parser.L_INVALID_MODIFIER, f"{start_pos}: type 'void' cannot take the 'volatile' modifier.")
             node = ast.VoidType(False)
-        elif token.iskeyword(("int", "long", "quad")): # IntType
+        elif token.iskeyword(("int", "long")): # IntType
             self.logger.debug(f"found IntType of size '{token.value}'")
             node = ast.IntType(is_volatile=is_volatile, type=token.value)
         elif token.iskeyword("func"): # FuncType

@@ -47,7 +47,7 @@ def GetExpressionType(scope: nssym.SymbolTable, expr: ast.Expr) -> ast.Type:
         if expr.type == "struct": return ast.StructType(
             is_volatile=False,
             members=[
-                ast.MemberData(name=name, type=nsst.ExpandType(scope, GetExpressionType(scope, value)), bits=None)
+                ast.MemberData(name=name, type=nsst.ExpandType(scope, GetExpressionType(scope, value)), bits=-1) # -1 indicates a complex expression which is special.
                 for name, value in expr.value.items()])
     raise Exception()
 
@@ -71,13 +71,16 @@ def CanCastTypes(scope: nssym.SymbolTable, from_type: ast.Type, to_type: ast.Typ
 class ExprProperty:
     def __init__(self):
         self._const: bool = False
+        self._iscomplexconst: bool = False
         self._lvalue: bool = False
     
     def is_const(self): return self._const
-    def set_const(self, const: bool): self._const = const
+    def set_const(self, const: bool): self._const = self._iscomplexconst = const
     def is_lvalue(self): return self._lvalue
     def is_rvalue(self): return not self._lvalue
     def set_lvalue(self, lvalue: bool): self._lvalue = lvalue
+    def is_cplxconst(self): return self._iscomplexconst
+    def set_cplxconst(self, cplxconst: bool): self._iscomplexconst = cplxconst 
 
 class ExprPropertyChecker(ast.NodeVisitor):
     "Return the properties of an expression."
@@ -154,6 +157,27 @@ class ExprPropertyChecker(ast.NodeVisitor):
         prop.set_const(False not in [self.visit(expr).is_const() for expr in node.exprs])
         prop.set_lvalue(self.visit(node.exprs[-1]).is_lvalue())
         return prop
+    
+    def visit_ComplexExpr(self, node: ast.ComplexExpr) -> ExprProperty:
+        prop = ExprProperty()
+        prop.set_const(False)
+        prop.set_lvalue(False)
+        
+        is_cplxconst = True
+        
+        if node.type == "struct":
+            for name, expr in node.value.items():
+                if not self.visit(expr).is_cplxconst():
+                    is_cplxconst = False
+                    continue
+        else:
+            for expr in node.value:
+                if not self.visit(expr).is_cplxconst():
+                    is_cplxconst = False
+                    continue
+                
+        prop.set_cplxconst(is_cplxconst)
+        return prop
 
 class Checker(ast.NodeVisitor):
     L_UNKNOWN = 1
@@ -164,6 +188,7 @@ class Checker(ast.NodeVisitor):
     L_TYPE_MISMATCH = 50
     L_INT_PRECISION = 51
     L_MISSING_MEMBER = 60
+    L_MISSING_VALUE = 61
     L_LABEL_NOT_EXIST = 70
     L_LABEL_WRONG_TYPE = 80
     L_NOT_IN_IF_ITER = 90
@@ -196,6 +221,25 @@ class Checker(ast.NodeVisitor):
         self.logger.debug("second pass, checking everything else")
         self.logger.increasepad()
         super().generic_visit(modl)
+        self.logger.decreasepad()
+        
+        self.logger.debug("verifying global variables are constant")
+        self.logger.increasepad()
+        
+        for varsym in filter(
+            lambda namesym: isinstance(namesym, nssym.VarSymbol),
+            self.scope.get_names()):
+            
+            decl: ast.VarDecl = varsym.get_node()
+            
+            if decl.value == None: continue
+        
+            epchk = ExprPropertyChecker(self.scope)
+            props: ExprProperty = epchk.visit(decl.value)
+        
+            if not props.is_const() and not props.is_cplxconst():
+                self._fatal(Checker.L_TYPE_MISMATCH, f"{decl.value.lineno, decl.value.col_offset} global VarDecl initial expression must be constant.")
+        
         self.logger.decreasepad()
     
     # Manage statements
@@ -324,6 +368,9 @@ class Checker(ast.NodeVisitor):
         
         super().generic_visit(decl)
         
+        if self.ret_type != None and decl.value == None:
+            self._fatal(Checker.L_MISSING_VALUE, f"{decl.lineno, decl.col_offset} function-local variable declaration must have a value, none given.")
+        
         self.__check_Decl(decl)
         
         # Recheck type in case it was an ArrayType with a new size value.
@@ -357,10 +404,10 @@ class Checker(ast.NodeVisitor):
         super().generic_visit(cexpr)
         
         func_expr_type = GetExpressionType(self.scope, cexpr.func_expr)
+        start = cexpr.func_expr.lineno, cexpr.func_expr.col_offset
+        end = cexpr.func_expr.end_lineno, cexpr.func_expr.end_col_offset
         
         if not isinstance(func_expr_type, ast.FuncType):
-            start = cexpr.func_expr.lineno, cexpr.func_expr.col_offset
-            end = cexpr.func_expr.end_lineno, cexpr.func_expr.end_col_offset
             self._fatal(self.L_TYPE_MISMATCH, f"expected expression to be FuncType at {start}-{end}")
         
         # Check that the right amount of parameters are being passed.
@@ -736,8 +783,13 @@ class Checker(ast.NodeVisitor):
     def visit_MemberData(self, mdata: ast.MemberData) -> ast.AST:
         if not self.typedef_check: return mdata
         super().generic_visit(mdata)
-        if mdata.bits != None and not isinstance(nsst.ExpandType(self.scope, mdata.type), ast.IntType):
-            self._fatal(Checker.L_INVALIDBITS, f"{(mdata.lineno, mdata.col_offset)} Member {mdata.name} has bits value {mdata.bits} but is not an integral type.")
+        if mdata.bits != None:
+            type = nsst.ExpandType(self.scope, mdata.type)
+            if not isinstance(type, ast.IntType):
+                self._fatal(Checker.L_INVALIDBITS, f"{(mdata.lineno, mdata.col_offset)} Member {mdata.name} has bits value {mdata.bits} but is not an integral type.")
+            bit_size = nstypes.CFG.INT_SIZES[type.type] * nstypes.CFG.BITS_PER_WORD
+            if mdata.bits > bit_size:
+                self._fatal(Checker.L_INVALIDBITS, f"{(mdata.lineno, mdata.col_offset)} Member {mdata.name} is a {bit_size}-bit IntType, but has bits value of {mdata.bits}.")
         return mdata
     
     # Manage scoping
