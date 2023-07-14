@@ -1,5 +1,8 @@
 compiler/
+compiler3/tests
 .vscode/
+bin/
+*.class
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
