@@ -63,7 +63,7 @@ A character can be escaped by putting a backslash (`\`) in front of it.
 The basic escape characters are:
 
 |Code|Value|Description|
-|----|----|
+|----|----|----|
 |`\0`|0x00|Null|
 |`\a`|0x07|Bell|
 |`\b`|0x08|Backspace|
