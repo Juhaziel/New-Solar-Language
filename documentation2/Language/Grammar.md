@@ -86,7 +86,10 @@ Below is a rough grammar of New Solar.
 <ATOM>            := "sizeof" '(' <TYPE> ')'
                    | '(' <COMMA_EXPR> ')'
                    | <string>
+                   | <wstring>
                    | <int>
+                   | <char>
+                   | <wchar>
                    | <name>
                    ;
 

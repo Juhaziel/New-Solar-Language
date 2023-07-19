@@ -46,8 +46,16 @@ Character literals are strictly 16-bits.
 
 Pointer literals are strictly 32-bits.
 
+### Characters ###
+Character literals are surrounded in single quotes (')
+It will transform its content into its 8-bit UTF-8 (ASCII-only) codepoint or, if prefixed with `w`/`W`, into its 16-bit UTF-16 (BMP-only) codepoint.
+
+Character literals support escape sequence which can be seen lower.
+
 ### String ###
-Strings are a sequence of character literals grouped together. They are considered to be of type `[n]int16` where n is the length of the string plus the null-terminator.
+Strings are a sequence of character literals grouped together and enclosed in double-quotes ("). They are considered to be of type `[n]int16` where n is the length of the string plus the null-terminator.
+
+Like character literals, the default encoding is UTF-8, or UTF-16 if prefixed with `w`/`W`. Unlike character literals, Unicode codepoints that don't fit into a single word (UTF-8->ASCII, UTF-16->BMP) will be encoded with multiple words.
 
 #### Escape Sequences ####
 A character can be escaped by putting a backslash (`\`) in front of it.
@@ -70,18 +78,22 @@ The basic escape characters are:
 |`\'`|'|Escaped single quote|
 |`\"`|"|Escaped double quote|
 
-Hexadecimal and Unicode sequences may be represented as follows:
+Octal, Hexadecimal and Unicode sequences may be represented as follows:
 
 |Format|Description|
 |----|----|
+|`\[0-7]{1,6}`|Represents an arbitrary 16-bit value through octal digit. For 6 digits, the last one must be 0 or 1|
 |`\x[0-9a-fA-F]{1,4}`|Represents an arbitrary 16-bit value through hexadecimal digits|
-|`\u[0-9a-fA-F]{1,4}`|Represents a BMP Unicode grapheme through its hexadecimal codepoint|
-|`\u[0-9a-fA-F]{1,6}`|Represents any Unicode grapheme through its hexadecimal codepoint|
+|`\u[0-9a-fA-F]{4}`|Represents a BMP Unicode grapheme through its hexadecimal codepoint|
+|`\u[0-9a-fA-F]{6}`|Represents any Unicode grapheme through its hexadecimal codepoint|
 
-Please note that `\U` can only be used while parsing a string.
+For any of these special escape sequences, an initial 0 will terminate parsing.
 
-Characters and Strings are encoded using UTF-16, unlike previous versions that used UTF-8.
+`'\015'` -> `{0o0}15`
+`'\105'` -> `{0o015}`
 
+`\u` can only be used while parsing a wide (UTF-16) character or a string.
+`\U` is only allowed for strings.
 If the backslash is followed by an unrecognised character, then only that character will be kept.
 
 ### Punctuators ###
